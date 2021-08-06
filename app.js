@@ -22,7 +22,9 @@ if (typeof (config.id) !== 'string' || typeof (config.password) !== 'string') {
 }
 
 async function configureBrowser() {
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({
+    args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    });
     const page = await browser.newPage();
     return page;
 }
@@ -45,7 +47,7 @@ async function getNewestMessage(page) {
 async function startTracking() {
     let page = await configureBrowser();
     let message = await getNewestMessage(page);
-    client.channels.cache.get('764064335600812056').send('Hello here!');
+    //client.channels.cache.get('764064335600812056').send('Hello here!');
 
     let tempMessage;
 
@@ -54,7 +56,7 @@ async function startTracking() {
         tempMessage = getNewestMessage(page);
         if (message != tempMessage) {
             message = tempMessage;
-            client.channels.cache.get('764064335600812056').send();
+            client.channels.cache.get('764064335600812056').send(message);
         }
     }, null, true, null, null, true);
     job.start();
@@ -62,3 +64,4 @@ async function startTracking() {
 
 client.login(config.BOT_TOKEN);
 startTracking();
+
